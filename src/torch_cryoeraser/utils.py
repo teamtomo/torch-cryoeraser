@@ -1,7 +1,5 @@
-from pathlib import Path
 from typing import Optional, Tuple
 
-import mrcfile
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -118,11 +116,6 @@ def estimate_background_std(image: torch.Tensor, mask: torch.Tensor):
     image = central_crop_2d(image, percentage=25).float()
     mask = central_crop_2d(mask, percentage=25)
     return torch.std(image[mask == 0])
-
-
-def get_pixel_spacing_from_header(image: Path) -> float:
-    with mrcfile.open(image, header_only=True, permissive=True) as mrc:
-        return float(mrc.voxel_size.x)
 
 
 def pixel_count_map_2d(mask: torch.Tensor):
