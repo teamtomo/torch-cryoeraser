@@ -1,72 +1,13 @@
-from typing import Optional, Tuple
-
 import numpy as np
 import torch
 import torch.nn.functional as F
 import scipy.ndimage as ndi
 from einops import reduce, rearrange
-from torchvision.transforms import functional as TF
 
 
 def calculate_resampling_factor(source: float, target: float) -> float:
     """Calculate the resampling factor for two different sampling rates."""
     return float(source / target)
-
-
-def rescale_2d_bicubic(
-    image: torch.Tensor,
-    factor: Optional[float] = None,
-    size: Optional[Tuple[int, int]] = None,
-) -> torch.Tensor:
-    """Rescale 2D image(s).
-
-    Parameters
-    ----------
-    image: torch.Tensor
-        `(b, c, h, w)` array of image(s).
-    factor: float
-        factor by which to rescale image(s).
-
-    Returns
-    -------
-    rescaled_image: torch.Tensor
-        `(b, c, h, w)` array of rescaled image(s).
-    """
-    if factor is not None:
-        h, w = image.shape[-2:]
-        size = int(factor * min(h, w))
-    rescaled_image = TF.resize(
-        image, size=size, interpolation=TF.InterpolationMode.BICUBIC
-    )
-    return rescaled_image
-
-
-def rescale_2d_nearest(
-    image: torch.Tensor,
-    factor: Optional[float] = None,
-    size: Optional[Tuple[int, int]] = None,
-) -> torch.Tensor:
-    """Rescale 2D image(s).
-
-    Parameters
-    ----------
-    image: torch.Tensor
-        `(b, c, h, w)` array of image(s).
-    factor: float
-        factor by which to rescale image(s).
-
-    Returns
-    -------
-    rescaled_image: torch.Tensor
-        `(b, c, h, w)` array of rescaled image(s).
-    """
-    if factor is not None:
-        h, w = image.shape[-2:]
-        size = int(factor * min(h, w))
-    rescaled_image = TF.resize(
-        image, size=size, interpolation=TF.InterpolationMode.NEAREST
-    )
-    return rescaled_image
 
 
 def normalise_2d(image: torch.Tensor) -> torch.Tensor:
