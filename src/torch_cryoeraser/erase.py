@@ -104,14 +104,15 @@ def _erase_single_image(
     )
 
     # fill foreground pixels with local mean
-    idx_foreground = torch.argwhere(mask.bool() == True)
-    idx_foreground = (idx_foreground[:, 0], idx_foreground[:, 1])
-    inpainted_image[idx_foreground] = local_mean[idx_foreground]
+    idx_foreground = torch.argwhere(mask.bool() == True)  # (b, 2)
+    n_foreground_pixels = len(idx_foreground)
+    idx_h, idx_w = idx_foreground[:, -2], idx_foreground[:, -1]
+    inpainted_image[idx_h, idx_w] = local_mean[idx_h, idx_w]
 
     # add noise with mean=0 std=background std estimate
     background_std = estimate_background_std(image, mask)
-    n_pixels_to_inpaint = idx_foreground[0].shape[0]
-    noise = np.random.normal(loc=0, scale=background_std,
-                             size=n_pixels_to_inpaint)
-    inpainted_image[idx_foreground] += torch.as_tensor(noise)
+    noise = np.random.normal(
+        loc=0, scale=background_std, size=n_foreground_pixels
+    )
+    inpainted_image[idx_h, idx_w] += torch.as_tensor(noise)
     return inpainted_image
