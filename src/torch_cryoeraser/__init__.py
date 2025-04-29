@@ -1,6 +1,12 @@
 """Erase masked regions from cryo-EM images"""
 
-__version__ = '0.1.0'
+from importlib.metadata import PackageNotFoundError, version
+
+try:
+    __version__ = version("torch-affine-utils")
+except PackageNotFoundError:
+    __version__ = "uninstalled"
+
 __author__ = "Alister Burt"
 __email__ = "alisterburt@gmail.com"
 
